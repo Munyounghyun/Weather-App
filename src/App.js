@@ -1,25 +1,12 @@
-import logo from './logo.svg';
-import './App.css';
+import logo from "./logo.svg";
+import "./App.css";
+
+//1. 앱이 실행되자마자 현재위치기반의 날씨가 보인다.
+//2. 날씨정보에는 도시, 섭씨 , 화씨 날씨상태
+//3. 5개의 버튼이 있다(1개는 현재위치 , 4개는 다른 도시)
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  return <div>hiiii</div>;
 }
 
 export default App;
