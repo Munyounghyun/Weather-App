@@ -1,5 +1,6 @@
 import "./App.css";
 import { useEffect, useState } from "react";
+import ClipLoader from "react-spinners/ClipLoader";
 import WeatherBox from "./component/WeatherBox";
 import "bootstrap/dist/css/bootstrap.min.css";
 import WeatherButton from "./component/WeatherButton";
@@ -11,40 +12,75 @@ import WeatherButton from "./component/WeatherButton";
 //6. 데이터를 들고오는 동안 로딩 스피너가 돈다
 function App() {
   const [weather, setWeather] = useState(null);
+  const [city, setCity] = useState("");
+  const [loading, setLoading] = useState(false);
   const cities = ["paris", "new york", "tokyo", "seoul"];
   //현재위치 가져오기
   const getCurrentLocation = () => {
     navigator.geolocation.getCurrentPosition((position) => {
       let lat = position.coords.latitude;
       let lon = position.coords.longitude;
-      console.log("현재 위치", lat, lon);
       getweatherByCurrentLocation(lat, lon);
     });
   };
   const getweatherByCurrentLocation = async (lat, lon) => {
     let url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=81108c4766ca0c9c3a08a325d468663e&units=metric`;
+    setLoading(true);
     let response = await fetch(url);
     let data = await response.json();
     setWeather(data);
+    setLoading(false);
   };
 
-  const getweatherByParis = async (lat, lon) => {
-    let url = `https://api.openweathermap.org/data/2.5/weather?lat=48&lon=2&appid=81108c4766ca0c9c3a08a325d468663e&units=metric`;
+  const getweatherByCity = async () => {
+    let url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=81108c4766ca0c9c3a08a325d468663e&units=metric`;
+    setLoading(true);
     let response = await fetch(url);
     let data = await response.json();
     setWeather(data);
+    setLoading(false);
   };
 
   useEffect(() => {
-    getCurrentLocation();
-  }, []);
+    if (city === "") {
+      getCurrentLocation();
+    } else {
+      getweatherByCity();
+    }
+  }, [city]);
+
+  //useEffect실행
+  //1.UI가 처음 그려질때
+  //2.배열에 있는 state값이 바뀔때 마다 호출
+  //오류 나는 이유는 위의 useEffect실행 하지만 밑의 주석 useEffect또 실행
+  //여기서 배열에있는 city가 처음 빈값이기때문에 오류발생
+  //그러므로 useEffect 두번 실행하면 안됨 위의 useEffect에 통일
+  // useEffect(() => {
+  //   console.log("city?", city);
+  //   getweatherByCity();
+  // }, [city]);
 
   return (
     <div>
-      <div className="container">
-        <WeatherBox weather={weather} />
-        <WeatherButton cities={cities} />
-      </div>
+      {loading ? (
+        <div className="container">
+          <ClipLoader
+            color="#f88c6b"
+            loading={loading} //loading이라는 props를 통해 보이고 안보이고 조절가능
+            //cssOverride={override}
+            size={150}
+          />
+        </div>
+      ) : (
+        <div className="container">
+          <WeatherBox weather={weather} />
+          <WeatherButton
+            cities={cities}
+            setCity={setCity}
+            selectedCity={city}
+          />
+        </div>
+      )}
     </div>
   );
 }
